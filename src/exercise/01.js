@@ -3,10 +3,13 @@
 
 import * as React from 'react'
 // 💣 remove this import
-import Globe from '../globe'
 
 // 🐨 use React.lazy to create a Globe component which uses a dynamic import
 // to get the Globe component from the '../globe' module.
+
+const eagerLoadGlobe = () => import('../globe')
+
+const Globe = React.lazy(eagerLoadGlobe)
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
@@ -31,11 +34,14 @@ function App() {
           type="checkbox"
           checked={showGlobe}
           onChange={e => setShowGlobe(e.target.checked)}
+          onMouseOver={eagerLoadGlobe}
         />
         {' show globe'}
       </label>
       <div style={{width: 400, height: 400}}>
-        {showGlobe ? <Globe /> : null}
+        <React.Suspense fallback={<div>loading...</div>}>
+          {showGlobe ? <Globe /> : null}
+        </React.Suspense>
       </div>
     </div>
   )
